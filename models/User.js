@@ -1,4 +1,5 @@
-import moongose, { Schema } from "mongoose";
+import moongose from "mongoose";
+import bcryptjs from "bcryptjs";
 const { Schema, model } = moongose;
 
 const userSchema = new Schema({
@@ -16,4 +17,23 @@ const userSchema = new Schema({
   },
 });
 
-export const user = model("user", userSchema);
+userSchema.pre("save", async function (next) {
+  const user = this;
+
+  if (!user.isModified("password")) return next();
+
+  try {
+    const salt = await bcryptjs.genSalt(10);
+    user.password = await bcryptjs.hash(user.password, salt);
+    next();
+  } catch (error) {
+    console.log(error);
+    throw new Error("Hash password failed");
+  }
+});
+
+userSchema.methods.comparePassword = async function (clientPassword) {
+  return await bcryptjs.compare(clientPassword, this.password);
+};
+
+export const User = model("User", userSchema);
