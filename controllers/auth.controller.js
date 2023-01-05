@@ -9,8 +9,12 @@ export const register = async (req, res) => {
     await user.save();
 
     //jwt
+    //Generate JWT token
+    const { token, expiresIn } = generateToken(user.id);
 
-    return res.status(201).json({ message: "User saved successfully" });
+    generateRefreshToken(user.id, res);
+
+    return res.status(201).json({ token, expiresIn });
   } catch (error) {
     console.log(error);
     if (error.code === 11000)
@@ -50,13 +54,7 @@ export const login = async (req, res) => {
 
 export const refreshToken = (req, res) => {
   try {
-    const refreshToken = req.cookies.refreshToken;
-
-    if (!refreshToken) throw new Error("No Bearer token");
-
-    const { userId } = jwt.verify(refreshToken, process.env.JWT_REFRESH);
-
-    const { token, expiresIn } = generateToken(userId);
+    const { token, expiresIn } = generateToken(req.userId);
 
     res.json({ token, expiresIn });
   } catch (error) {
