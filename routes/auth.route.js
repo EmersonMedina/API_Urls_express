@@ -22,6 +22,6 @@ router.get("logout", logout);
 
 router.get("/protected", requireToken);
 
-router.get("/refresh", refreshToken);
+router.get("/refresh", requireRefreshToken, refreshToken);
 
 export default router;
