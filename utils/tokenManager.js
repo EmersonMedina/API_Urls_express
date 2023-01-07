@@ -25,7 +25,7 @@ export const generateRefreshToken = (userId, res) => {
       httpOnly: true,
       secure: !(process.env.MODO === "developer"),
       expires: new Date((Date.now() + expiresIn) * 1000),
-      // sameSite: "none",
+      sameSite: "none",
     });
   } catch (error) {
     console.log(error);
