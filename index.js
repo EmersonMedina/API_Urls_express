@@ -20,6 +20,7 @@ app.use(
 
       return callback(`Invalid by CORS; origin: ${origin}`);
     },
+    credentials: true,
   })
 );
 
