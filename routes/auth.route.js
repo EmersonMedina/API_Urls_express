@@ -18,7 +18,7 @@ router.post("/register", validateRegister, register);
 
 router.post("/login", validateLogin, login);
 
-router.get("logout", logout);
+router.get("/logout", logout);
 
 router.get("/protected", requireToken);
 
