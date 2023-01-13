@@ -32,6 +32,25 @@ export const getLink = async (req, res) => {
   }
 };
 
+export const getLongLink = async (req, res) => {
+  try {
+    const nanoLink = req.params.id;
+
+    const link = await Link.findOne({ nanoLink });
+
+    if (!link) return res.status(404).json({ message: "Link not found" });
+
+    res.json({ longLink: link.longLink });
+  } catch (error) {
+    console.log(error);
+
+    if (error.kind === "ObjectId")
+      return res.status(403).json({ message: "Invalid id" });
+
+    res.status(500).json({ message: "Error in server" });
+  }
+};
+
 export const createLink = async (req, res) => {
   const { longLink } = req.body;
 
