@@ -65,6 +65,9 @@ export const refreshToken = (req, res) => {
 };
 
 export const logout = (req, res) => {
-  res.clearCookie("refreshToken", { sameSite: "none" });
+  res.clearCookie("refreshToken", {
+    sameSite: "none",
+    secure: process.env.MODO === "developer" ? false : true,
+  });
   res.json({ ok: true });
 };
