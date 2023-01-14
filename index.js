@@ -9,7 +9,7 @@ import linkRouter from "./routes/link.route.js";
 
 const app = express();
 
-const whiteList = [process.env.ORIGIN1];
+const whiteList = [process.env.ORIGIN1, process.env.ORIGIN2];
 
 app.use(
   cors({
