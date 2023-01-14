@@ -65,6 +65,6 @@ export const refreshToken = (req, res) => {
 };
 
 export const logout = (req, res) => {
-  res.clearCookie("refreshToken");
+  res.clearCookie("refreshToken", { sameSite: "none" });
   res.json({ ok: true });
 };
