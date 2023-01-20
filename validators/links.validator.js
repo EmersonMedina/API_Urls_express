@@ -3,6 +3,7 @@ import { body, param } from "express-validator";
 import { validateRequest } from "./requestValidator.js";
 
 export const validateLink = [
+  body("name", "Enter a valid name").trim().notEmpty(),
   body("longLink", "Enter a valid link")
     .trim()
     .notEmpty()
@@ -23,5 +24,10 @@ export const validateLink = [
 
 export const validateParams = [
   param("id", "Invalid parameter id").trim().notEmpty().escape(),
+  validateRequest,
+];
+
+export const validateFilterValue = [
+  param("filterValue", "Invalid Filter Value").trim().notEmpty().escape(),
   validateRequest,
 ];

@@ -15,6 +15,14 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  name: {
+    type: String,
+    default: "",
+  },
+  photoURL: {
+    type: String,
+    default: "",
+  },
 });
 
 userSchema.pre("save", async function (next) {

@@ -3,9 +3,42 @@ import { nanoid } from "nanoid";
 
 export const getLinks = async (req, res) => {
   try {
-    const links = await Link.find({ userId: req.userId });
+    const { startIn, quantity } = req.params;
 
-    res.json({ links });
+    const links = await Link.find({ userId: req.userId })
+      .skip(startIn)
+      .limit(quantity);
+
+    const totalLinks = await Link.count({ userId: req.userId });
+
+    res.json({ links, totalLinks });
+  } catch (error) {
+    res.status(500).json({ message: "Error in server" });
+  }
+};
+
+export const getFilteredLinks = async (req, res) => {
+  try {
+    const filterValue = req.params.filterValue;
+
+    const queryName = {
+      name: { $regex: ".*" + filterValue + ".*", $options: "i" },
+    };
+
+    const queryLongLink = {
+      longLink: { $regex: ".*" + filterValue + ".*", $options: "i" },
+    };
+
+    const links = await Link.find({ userId: req.userId }).or([
+      queryName,
+      queryLongLink,
+    ]);
+
+    if (!links) return res.status(404).json({ error: "Not Found" });
+
+    const totalLinks = links.length;
+
+    res.json({ links, totalLinks });
   } catch (error) {
     res.status(500).json({ message: "Error in server" });
   }
@@ -16,8 +49,6 @@ export const getLink = async (req, res) => {
     const id = req.params.id;
 
     const link = await Link.findById(id).where({ userId: req.userId });
-
-    console.log(link);
 
     if (!link) return res.status(404).json({ message: "Link not found" });
 
@@ -52,10 +83,11 @@ export const getLongLink = async (req, res) => {
 };
 
 export const createLink = async (req, res) => {
-  const { longLink } = req.body;
+  const { longLink, name } = req.body;
 
   try {
     const link = new Link({
+      name,
       longLink,
       nanoLink: nanoid(6),
       userId: req.userId,
@@ -63,7 +95,9 @@ export const createLink = async (req, res) => {
 
     const newLink = await link.save();
 
-    res.status(201).json({ newLink });
+    const totalLinks = await Link.count({ userId: req.userId });
+
+    res.status(201).json({ newLink, totalLinks });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Error in server" });
@@ -74,13 +108,14 @@ export const createLink = async (req, res) => {
 export const UpdateLink = async (req, res) => {
   try {
     const id = req.params.id;
-    const { longLink } = req.body;
+    const { name, longLink } = req.body;
 
     const link = await Link.findById(id).where({ userId: req.userId });
 
     if (!link) return res.status(404).json({ message: "Link not found" });
 
     link.longLink = longLink;
+    link.name = name;
 
     await link.save();
 
@@ -105,7 +140,9 @@ export const deleteLink = async (req, res) => {
 
     await link.remove();
 
-    res.json({ link });
+    const totalLinks = await Link.count({ userId: req.userId });
+
+    res.json({ link, totalLinks });
   } catch (error) {
     console.log(error);
 

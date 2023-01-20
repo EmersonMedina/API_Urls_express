@@ -6,7 +6,6 @@ import {
   logout,
 } from "../controllers/auth.controller.js";
 import { requireRefreshToken } from "../middlewares/requireRefreshToken.js";
-import { requireToken } from "../middlewares/requireToken.js";
 import {
   validateLogin,
   validateRegister,
@@ -19,8 +18,6 @@ router.post("/register", validateRegister, register);
 router.post("/login", validateLogin, login);
 
 router.get("/logout", logout);
-
-router.get("/protected", requireToken);
 
 router.get("/refresh", requireRefreshToken, refreshToken);
 

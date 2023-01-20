@@ -43,9 +43,17 @@ export const login = async (req, res) => {
     //Generate JWT token
     const { token, expiresIn } = generateToken(user.id);
 
+    console.log(user);
+
     generateRefreshToken(user.id, res);
 
-    res.json({ token, expiresIn });
+    res.json({
+      token,
+      expiresIn,
+      email: user.email,
+      name: user.name,
+      photoURL: user.photoURL,
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "An error occurred on the server" });
@@ -60,7 +68,7 @@ export const refreshToken = (req, res) => {
   } catch (error) {
     console.log(error);
 
-    return res.sratus(401).send({ error: error.message });
+    return res.status(401).send({ error: error.message });
   }
 };
 

@@ -2,6 +2,11 @@ import moongose from "mongoose";
 const { Schema, model } = moongose;
 
 const linkSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true,
+  },
   longLink: {
     type: String,
     required: true,
